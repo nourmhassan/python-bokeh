@@ -28,9 +28,12 @@ graph.node_renderer.data_source.add(color_list, 'color')
 graph.node_renderer.glyph = Oval(height=10, width=10, fill_color='color')
 
 # This is drawing edges from start to end
-graph.edge_renderer.data_source.data = dict(
-    start=[0]*N,
-    end=node_indices)
+verts = [vertex for vertex in graph_data.vertexes]
+for i in verts:
+  for edge in i.edges:
+    graph.edge_renderer.data_source.data = dict(
+      start=[verts.index(i)],
+      end=[verts.index(edge.destination)])
 
 ### start of layout code
 x = [v.pos['x'] for v in graph_data.vertexes]
