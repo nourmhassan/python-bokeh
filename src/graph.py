@@ -61,7 +61,7 @@ class Graph:
 
     for y in range(buffer_size, height - buffer_size, size):
       for x in range(buffer_size, width - buffer_size, size):
-          if random.randint(0, 500) < probability * 100:
+          if random.randint(0, 315) < probability * 100:
             value = "v" + str(count)
             new_vert = Vertex(
               value,

@@ -2,13 +2,13 @@ import math
 
 from bokeh.io import show, output_file
 from bokeh.plotting import figure
-from bokeh.models import GraphRenderer, StaticLayoutProvider, Circle, LabelSet, ColumnDataSource
+from bokeh.models import GraphRenderer, StaticLayoutProvider, Square, LabelSet, ColumnDataSource
 from bokeh.palettes import Spectral8
 
 from graph import *
 
 graph_data = Graph()
-graph_data.randomize(500, 500, 20, 0.1)
+graph_data.randomize(500, 500, 30, 0.1)
 graph_data.connect_components(graph_data)
 
 
@@ -27,7 +27,7 @@ graph = GraphRenderer()
 
 graph.node_renderer.data_source.add(node_indices, 'index')
 graph.node_renderer.data_source.add(color_list, 'color')
-graph.node_renderer.glyph = Circle(size=20, fill_color='color')
+graph.node_renderer.glyph = Square(size=30, fill_color='color')
 
 # This is drawing edges from start to end
 verts = [vertex for vertex in graph_data.vertexes]
@@ -71,6 +71,11 @@ labels = LabelSet(x='x', y='y', text='values', level='overlay',
   text_align='center', text_baseline='middle', source=source)
 
 plot.add_layout(labels)
+plot.xaxis.visible = False
+plot.yaxis.visible = False
+plot.xgrid.visible = False
+plot.ygrid.visible = False
+
 
 
 output_file('graph.html')
