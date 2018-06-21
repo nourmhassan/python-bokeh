@@ -2,7 +2,7 @@ import math
 
 from bokeh.io import show, output_file
 from bokeh.plotting import figure
-from bokeh.models import GraphRenderer, StaticLayoutProvider, Oval
+from bokeh.models import GraphRenderer, StaticLayoutProvider, Oval, LabelSet, ColumnDataSource
 from bokeh.palettes import Spectral8
 
 from graph import *
@@ -30,10 +30,17 @@ graph.node_renderer.glyph = Oval(height=10, width=10, fill_color='color')
 # This is drawing edges from start to end
 verts = [vertex for vertex in graph_data.vertexes]
 for i in verts:
-  for edge in i.edges:
-    graph.edge_renderer.data_source.data = dict(
-      start=[verts.index(i)],
-      end=[verts.index(edge.destination)])
+ start = []
+ end = []
+
+for vert in verts:
+  for edge in vert.edges:
+    start.append(verts.index(vert))
+    end.append(verts.index(edge.destination))
+
+graph.edge_renderer.data_source.data = dict(
+  start=start,
+  end=end)
 
 ### start of layout code
 x = [v.pos['x'] for v in graph_data.vertexes]
@@ -41,6 +48,25 @@ y = [v.pos['y'] for v in graph_data.vertexes]
 
 graph_layout = dict(zip(node_indices, zip(x, y)))
 graph.layout_provider = StaticLayoutProvider(graph_layout=graph_layout)
+
+## labels
+x = []
+y = []
+values = []
+
+for vert in verts:
+      x.append(vert.pos['x'])
+      y.append(vert.pos['y'])
+      values.append(vert.value)
+
+source = ColumnDataSource(data=dict(x=x,
+                                    y=y,
+                                    values=values))
+
+labels = LabelSet(x='x', y='y', text='values', level='glyph',
+  x_offset=5, y_offset=5, source=source)
+
+plot.add_layout(labels)
 
 plot.renderers.append(graph)
 
