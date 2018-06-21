@@ -2,13 +2,14 @@ import math
 
 from bokeh.io import show, output_file
 from bokeh.plotting import figure
-from bokeh.models import GraphRenderer, StaticLayoutProvider, Oval, LabelSet, ColumnDataSource
+from bokeh.models import GraphRenderer, StaticLayoutProvider, Circle, LabelSet, ColumnDataSource
 from bokeh.palettes import Spectral8
 
 from graph import *
 
 graph_data = Graph()
 graph_data.debug_create_test_data()
+print(graph_data.bfs(graph_data.vertexes[0]))
 
 N = len(graph_data.vertexes)
 node_indices = list(range(N))
@@ -25,7 +26,7 @@ graph = GraphRenderer()
 
 graph.node_renderer.data_source.add(node_indices, 'index')
 graph.node_renderer.data_source.add(color_list, 'color')
-graph.node_renderer.glyph = Oval(height=10, width=10, fill_color='color')
+graph.node_renderer.glyph = Circle(size=20, fill_color='color')
 
 # This is drawing edges from start to end
 verts = [vertex for vertex in graph_data.vertexes]
@@ -49,6 +50,8 @@ y = [v.pos['y'] for v in graph_data.vertexes]
 graph_layout = dict(zip(node_indices, zip(x, y)))
 graph.layout_provider = StaticLayoutProvider(graph_layout=graph_layout)
 
+plot.renderers.append(graph)
+
 ## labels
 x = []
 y = []
@@ -63,12 +66,11 @@ source = ColumnDataSource(data=dict(x=x,
                                     y=y,
                                     values=values))
 
-labels = LabelSet(x='x', y='y', text='values', level='glyph',
-  x_offset=5, y_offset=5, source=source)
+labels = LabelSet(x='x', y='y', text='values', level='overlay',
+  text_align='center', text_baseline='middle', source=source)
 
 plot.add_layout(labels)
 
-plot.renderers.append(graph)
 
 output_file('graph.html')
 show(plot)
