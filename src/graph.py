@@ -51,5 +51,40 @@ class Graph:
 
     return found
 
-  def debug_randomize(self):
-    pass 
+  def randomize(self, width, height, size, probability):
+    def connectVerts(v0, v1):
+      v0.edges.append(Edge(v1))
+      v1.edges.append(Edge(v0))
+
+    count = 0
+    buffer_size = 30
+
+    for y in range(buffer_size, height - buffer_size, size):
+      for x in range(buffer_size, width - buffer_size, size):
+          if random.randint(0, 500) < probability * 100:
+            value = "v" + str(count)
+            new_vert = Vertex(
+              value,
+              x=x,
+              y=y,
+              )
+            self.vertexes.append(new_vert)
+            count+= 1
+    
+    for v in self.vertexes:
+      # Connect randomly
+        if random.randint(0, 14) < probability * 100:
+          index = self.vertexes.index(v)
+          nums = list(range(0,index - 1)) + list(range(index + 1, len(self.vertexes)))
+          random_destination = random.choice(nums)
+          connectVerts(v, self.vertexes[random_destination])
+
+  def connect_components(self, graph):
+    searched = []
+
+    for v in graph.vertexes:
+      if v not in searched:
+        subgraph = self.bfs(v)
+        for ver in subgraph:
+          searched.append(ver)
+
